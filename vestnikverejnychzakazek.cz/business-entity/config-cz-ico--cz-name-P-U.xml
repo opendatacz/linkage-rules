@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Silk>
+	<Prefixes>
+		<Prefix id="schema" namespace="http://schema.org/"/>
+		<Prefix id="adms" namespace="http://www.w3.org/ns/adms#"/>
+		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+		<Prefix id="organization" namespace="http://www.w3.org/ns/organization#"/>
+		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+		<Prefix id="wgs84" namespace="http://www.w3.org/2003/01/geo/wgs84_pos#"/>
+		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+		<Prefix id="gr" namespace="http://purl.org/goodrelations/v1#"/>
+		<Prefix id="skos" namespace="http://www.w3.org/2004/02/skos/core#"/>
+		<Prefix id="dcterms" namespace="http://purl.org/dc/terms/#"/></Prefixes>
+	<DataSources>
+		<DataSource id="sourceA" type="sparqlEndpoint">
+			<Param name="endpointURI" value="http://lod2-dev.vse.cz:8890/sparql"/>
+			<Param name="graph" value="http://linked.opendata.cz/resource/dataset/vestnikverejnychzakazek.cz"/>
+		</DataSource>
+	</DataSources>
+	<Blocking enabled="true" blocks="2000" />
+	<Interlinks> <Interlink id="vvz5"> <LinkType>owl:sameAs</LinkType>
+		<SourceDataset dataSource="sourceA" var="a">
+			<!--
+			?a a gr:BusinessEntity ;
+				gr:legalName ?name ;
+				schema:address ?addr .
+			?addr schema:addressCountry [] .
+
+			MINUS {
+			  ?addr schema:addressCountry ?c .
+				BIND(UCASE(?c) AS ?cc)
+			  FILTER(STRSTARTS(?cc, ?cz))
+			  VALUES ?cz {
+				'CZ'
+				'ČES'
+			  }
+			}
+			-->
+			<RestrictTo>
+				?a a gr:BusinessEntity ; gr:legalName ?name ; schema:address ?addr ; adms:identifier [ skos:notation ?not  ] . ?addr schema:addressCountry ?c . BIND(UCASE(?c) AS ?cc) FILTER(STRSTARTS(?cc, ?cz)) VALUES ?cz { 'CZ' 'ČES' } FILTER(SUBSTR(UCASE(?name), 1, 1) &gt;= 'P') FILTER(SUBSTR(UCASE(?name), 1, 1) &lt; 'U') 
+
+			</RestrictTo></SourceDataset>
+		<TargetDataset dataSource="sourceA" var="b">
+			<RestrictTo>
+				?b a gr:BusinessEntity ; gr:legalName ?name ; schema:address ?addr . FILTER NOT EXISTS { ?b adms:identifier [  ] . } ?addr schema:addressCountry ?c . BIND(UCASE(?c) AS ?cc) FILTER(STRSTARTS(?cc, ?cz)) VALUES ?cz { 'CZ' 'ČES' } FILTER(SUBSTR(UCASE(?name), 1, 1) &gt;= 'P') FILTER(SUBSTR(UCASE(?name), 1, 1) &lt; 'U') 
+
+			</RestrictTo></TargetDataset>
+		<LinkageRule>
+			<Aggregate type="min">
+				<Compare metric="inequality" required="true">
+					<Input path="?a" />
+					<Input path="?b" />
+				</Compare>
+
+					<Compare metric="levenshtein" required="false" threshold="0.1" weight="2">
+						<TransformInput function="lowerCase">
+							<TransformInput function="removeSpecialChars">
+								<Input path="?a/gr:legalName"/>
+							</TransformInput>
+						</TransformInput>
+						<TransformInput function="lowerCase">
+							<TransformInput function="removeSpecialChars">
+								<Input path="?b/gr:legalName"/>
+							</TransformInput>
+						</TransformInput>
+					</Compare>
+			</Aggregate>
+		</LinkageRule>
+		<Filter/> </Interlink> </Interlinks> <Outputs>
+	<Output type="file" minConfidence="0.9">
+		<Param name="format" value="ntriples"/>
+		<Param name="file" value="w:\dip\dedup\vvz\links\cz-ico--cz-name-P-U.n3"/>
+	</Output>
+</Outputs> </Silk>
