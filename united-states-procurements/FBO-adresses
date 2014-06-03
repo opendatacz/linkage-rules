@@ -1,0 +1,88 @@
+<Silk>
+  <Prefixes>
+    <Prefix namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" id="rdf"></Prefix>
+    <Prefix namespace="http://dbpedia.org/property/" id="dbpp"></Prefix>
+    <Prefix namespace="http://dbpedia.org/resource/" id="dbpedia"></Prefix>
+    <Prefix namespace="http://purl.org/dc/terms/" id="dcterms"></Prefix>
+    <Prefix namespace="http://www.w3.org/2002/07/owl#" id="owl"></Prefix>
+    <Prefix namespace="http://www.w3.org/2004/02/skos/core#" id="skos"></Prefix>
+    <Prefix namespace="http://schema.org/" id="schema"></Prefix>
+    <Prefix namespace="http://www.w3.org/2000/01/rdf-schema#" id="rdfs"></Prefix>
+    <Prefix namespace="http://dbpedia.org/ontology/" id="dbpediaowl"></Prefix>
+  </Prefixes>
+  <DataSources>
+    <DataSource type="sparqlEndpoint" id="FBO">
+      <Param name="pageSize" value="1000"></Param>
+      <Param name="pauseTime" value="0"></Param>
+      <Param name="retryCount" value="3"></Param>
+      <Param name="endpointURI" value="http://lod2.vse.cz:8890/sparql"></Param>
+      <Param name="retryPause" value="1000"></Param>
+      <Param name="graph" value="http://linked.opendata.cz/resource/dataset/fbo.gov/2014-02-08"></Param>
+      <Param name="login" value=""></Param>
+      <Param name="entityList" value=""></Param>
+      <Param name="password" value=""></Param>
+      <Param name="additionalParameters" value=""></Param>
+    </DataSource>
+    <DataSource type="sparqlEndpoint" id="DBpedia">
+      <Param name="pageSize" value="1000"></Param>
+      <Param name="pauseTime" value="0"></Param>
+      <Param name="retryCount" value="3"></Param>
+      <Param name="endpointURI" value="http://dbpedia.org/sparql"></Param>
+      <Param name="retryPause" value="1000"></Param>
+      <Param name="graph" value="http://dbpedia.org"></Param>
+      <Param name="login" value=""></Param>
+      <Param name="entityList" value=""></Param>
+      <Param name="password" value=""></Param>
+      <Param name="parallel" value="false"></Param>
+      <Param name="additionalParameters" value=""></Param>
+    </DataSource>
+  </DataSources>
+  <Interlinks>
+    <Interlink id="LocalityFBO">
+      <LinkType>schema:addressLocality</LinkType>
+      <SourceDataset dataSource="FBO" var="a">
+        <RestrictTo> ?a &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://schema.org/PostalAddress&gt; . </RestrictTo>
+      </SourceDataset>
+      <TargetDataset dataSource="DBpedia" var="b">
+        <RestrictTo>
+          VALUES ?class {&lt;http://schema.org/AdministrativeArea&gt; &lt;http://schema.org/City&gt; &lt;http://schema.org/Place&gt; &lt;http://umbel.org/umbel/rc/City&gt; &lt;http://umbel.org/umbel/rc/PopulatedPlace&gt; &lt;http://umbel.org/umbel/rc/Village&gt; &lt;http://www.opengis.net/gml/_Feature&gt; &lt;http://dbpedia.org/ontology/PopulatedPlace&gt;} ?b &lt;http://purl.org/dc/terms/subject&gt;/&lt;http://www.w3.org/2004/02/skos/core#broader&gt;{0,3} &lt;http://dbpedia.org/resource/Category:Populated_places_in_the_United_States&gt;; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; ?class .
+        </RestrictTo>
+      </TargetDataset>
+      <LinkageRule>
+        <Compare weight="1" threshold="0.0" required="false" metric="levenshteinDistance" id="unnamed_8">
+          <TransformInput function="regexReplace" id="unnamed_7">
+            <Input path="?a/schema:postalCode" id="unnamed_1"></Input>
+            <Param name="regex" value="^(.{5}).*"></Param>
+            <Param name="replace" value="$1"></Param>
+          </TransformInput>
+          <TransformInput function="regexReplace" id="unnamed_6">
+            <TransformInput function="numReduce" id="unnamed_5">
+              <TransformInput function="tokenize" id="unnamed_4">
+                <TransformInput function="tokenize" id="unnamed_3">
+                        <TransformInput function="merge">
+			<Input path="?b/&lt;http://dbpedia.org/ontology/postalCode&gt;"/>
+			<Input path="?b/&lt;http://dbpedia.org/property/postalCode&gt;"/>
+       			<Input path="?b/&lt;http://dbpedia.org/property/zipcode&gt;"/>
+      			</TransformInput>
+                  <Param name="regex" value="\s"></Param>
+                </TransformInput>
+                <Param name="regex" value="-"></Param>
+              </TransformInput>
+            </TransformInput>
+            <Param name="regex" value="^(.{5}).*"></Param>
+            <Param name="replace" value="$1"></Param>
+          </TransformInput>
+          <Param name="minChar" value="0"></Param>
+          <Param name="maxChar" value="z"></Param>
+        </Compare>
+      </LinkageRule>
+      <Filter limit="2"></Filter>
+      <Outputs>
+  	<Output type="file" minConfidence="0.1">
+    	<Param name="file" value="accept_links_FBO_postalCode_verify2.nt"/>
+    	<Param name="format" value="ntriples"/>
+  	</Output>
+      </Outputs>
+    </Interlink>
+  </Interlinks>
+</Silk>
