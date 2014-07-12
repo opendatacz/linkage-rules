@@ -13,36 +13,20 @@
 	<Prefix id="dcterms" namespace="http://purl.org/dc/terms/#"/></Prefixes>
 	<DataSources>
 		<DataSource id="sourceA" type="sparqlEndpoint">
-			<Param name="endpointURI" value="http://lod2-dev.vse.cz:8890/sparql"/>
-			<Param name="graph" value="http://linked.opendata.cz/resource/dataset/vestnikverejnychzakazek.cz"/>
+			<Param name="endpointURI" value="SOURCE_ENDPOINT"/>
+			<Param name="graph" value="SOURCE_GRAPH"/>
 		</DataSource>
 	</DataSources>
 	<Blocking enabled="false" />
 	<Interlinks> <Interlink id="vvz"> <LinkType>owl:sameAs</LinkType>
 <SourceDataset dataSource="sourceA" var="a">
-	<!--
-	?a a gr:BusinessEntity ;
-		gr:legalName ?name ;
-		schema:address ?addr .
-	?addr schema:addressCountry [] .
-
-	MINUS {
-	  ?addr schema:addressCountry ?c .
-	    BIND(UCASE(?c) AS ?cc)
-	  FILTER(STRSTARTS(?cc, ?cz))
-	  VALUES ?cz {
-	    'CZ'
-	    'ČES'
-	  }
-	}
-	-->
 <RestrictTo>
-	?a a gr:BusinessEntity ; gr:legalName ?name . FILTER NOT EXISTS { ?b schema:address ?addr }
+	?a a gr:BusinessEntity ; gr:legalName ?name ; schema:address ?addr . ?addr schema:addressCountry [] . MINUS { ?addr schema:addressCountry ?c . BIND(UCASE(?c) AS ?cc) FILTER(STRSTARTS(?cc, ?cz)) VALUES ?cz { 'CZ' 'ČES' } }
 
 </RestrictTo></SourceDataset>
 <TargetDataset dataSource="sourceA" var="b">
 <RestrictTo>
-	?b a gr:BusinessEntity ; gr:legalName ?name ; schema:address ?addr . ?addr schema:addressCountry ?c . BIND(UCASE(?c) AS ?cc) FILTER(STRSTARTS(?cc, ?cz)) VALUES ?cz { 'CZ' 'ČES' }
+	?b a gr:BusinessEntity ; gr:legalName ?name . FILTER NOT EXISTS { ?b schema:address ?addr }
 
 </RestrictTo></TargetDataset>
 <LinkageRule>
@@ -67,8 +51,8 @@
   </Aggregate>
 </LinkageRule> 
 <Filter/> </Interlink> </Interlinks> <Outputs>
-<Output type="file" minConfidence="0.0">
-<Param name="format" value="ntriples"/>
-<Param name="file" value="w:\dip\dedup\vvz\links\unknown--cz.n3"/>
+<Output type="sparul" minConfidence="0.0">
+OUTPUT
+
 </Output>
 </Outputs> </Silk>
