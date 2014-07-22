@@ -2,6 +2,11 @@
 
 Splits Silk linkage rule into multiple rules based on SPARQL 1.1 property paths and their values.
 
+## Dependencies
+
+* Ruby version >= 1.9.3
+* [Bundler](http://bundler.io/)
+
 ## Use
 
 ```bash
