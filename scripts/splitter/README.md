@@ -1,0 +1,16 @@
+# Linkage rule splitter
+
+Splits Silk linkage rule into multiple rules based on SPARQL 1.1 property paths and their values.
+
+## Use
+
+```bash
+# Install dependencies from Gemfile
+bundle install
+# Get instructions how to run the splitter
+ruby ./linkage_rule_splitter.rb help split
+```
+
+## Known caveats
+
+Only supports a single data source at the moment.

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Silk>
+  <Prefixes>
+    <Prefix id="schema" namespace="http://schema.org/"/>
+    <Prefix id="adms" namespace="http://www.w3.org/ns/adms#"/>
+    <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Prefix id="organization" namespace="http://www.w3.org/ns/organization#"/>
+    <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+    <Prefix id="wgs84" namespace="http://www.w3.org/2003/01/geo/wgs84_pos#"/>
+    <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix id="gr" namespace="http://purl.org/goodrelations/v1#"/>
+    <Prefix id="skos" namespace="http://www.w3.org/2004/02/skos/core#"/>
+    <Prefix id="dcterms" namespace="http://purl.org/dc/terms/#"/>
+    <Prefix id="pc" namespace="http://purl.org/procurement/public-contracts#"/>
+  </Prefixes>
+  <DataSources>
+    <DataSource id="sourceA" type="sparqlEndpoint">
+      <Param name="endpointURI" value="http://lod2.vse.cz:8890/sparql"/>
+      <Param name="graph" value="http://linked.opendata.cz/resource/dataset/ted.europa.eu"/>
+    </DataSource>
+  </DataSources>
+  <Blocking enabled="true" blocks="BB"/>
+  <Interlinks>
+    <Interlink id="business_entity">
+      <LinkType>owl:sameAs</LinkType>
+      <SourceDataset dataSource="sourceA" var="a">
+        <RestrictTo>?a rdf:type pc:Contract .</RestrictTo>
+      </SourceDataset>
+      <TargetDataset dataSource="sourceA" var="b">
+        <RestrictTo>?b rdf:type pc:Contract .</RestrictTo>
+      </TargetDataset>
+      <LinkageRule>
+        <Compare metric="levenshtein" required="true" threshold="0.1">
+          <TransformInput function="lowerCase">
+            <TransformInput function="removeSpecialChars">
+              <Input path="?a/schema:legalName"/>
+            </TransformInput>
+          </TransformInput>
+          <TransformInput function="lowerCase">
+            <TransformInput function="removeSpecialChars">
+              <Input path="?b/schema:legalName"/>
+            </TransformInput>
+          </TransformInput>
+        </Compare>
+      </LinkageRule>
+      <Filter/>
+    </Interlink>
+  </Interlinks>
+  <Outputs>
+    <Output type="file">
+      <Param name="format" value="ntriples"/>
+      <Param name="file" value="w:\dip\dedup\ted\links\links.nt"/>
+    </Output>
+  </Outputs>
+</Silk>
