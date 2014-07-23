@@ -1,0 +1,167 @@
+<Silk>
+  <Prefixes>
+    <Prefix namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" id="rdf"></Prefix>
+    <Prefix namespace="http://purl.org/dc/terms/" id="dcterm"></Prefix>
+    <Prefix namespace="http://purl.org/goodrelations/v1#" id="gr"></Prefix>
+    <Prefix namespace="http://www.w3.org/ns/adms#" id="adms"></Prefix>
+    <Prefix namespace="http://www.w3.org/2002/07/owl#" id="owl"></Prefix>
+    <Prefix namespace="http://www.w3.org/2004/02/skos/core#" id="skos"></Prefix>
+    <Prefix namespace="http://schema.org/" id="schema"></Prefix>
+    <Prefix namespace="http://www.w3.org/2000/01/rdf-schema#" id="rdfs"></Prefix>
+    <Prefix namespace="http://purl.org/procurement/public-contracts#" id="pc"></Prefix>
+  </Prefixes>
+  <DataSources>
+    <DataSource type="sparqlEndpoint" id="TED">
+      <Param name="pageSize" value="1000"></Param>
+      <Param name="pauseTime" value="0"></Param>
+      <Param name="retryCount" value="3"></Param>
+      <Param name="endpointURI" value="http://lod2.vse.cz:8890/sparql"></Param>
+      <Param name="retryPause" value="1000"></Param>
+      <Param name="graph" value="http://linked.opendata.cz/resource/dataset/ted.europa.eu"></Param>
+      <Param name="login" value=""></Param>
+      <Param name="entityList" value=""></Param>
+      <Param name="password" value=""></Param>
+      <Param name="additionalParameters" value=""></Param>
+    </DataSource>
+  </DataSources>
+  <Interlinks>
+    <Interlink id="sameContracts">
+      <LinkType>owl:sameAs</LinkType>
+      <SourceDataset dataSource="TED" var="a">
+        <RestrictTo>
+	  ?a &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt;; &lt;http://purl.org/procurement/public-contracts#contractingAuthority&gt;/&lt;http://schema.org/address&gt;/&lt;http://schema.org/addressCountry&gt; &quot;CZ&quot;; &lt;http://purl.org/procurement/public-contracts#kind&gt; &lt;http://purl.org/procurement/public-contracts-kinds#Supplies&gt;. FILTER NOT EXISTS {[] &lt;http://purl.org/procurement/public-contracts#lot&gt; ?a.} .
+	</RestrictTo>
+      </SourceDataset>
+      <TargetDataset dataSource="TED" var="b">
+        <RestrictTo>
+          ?b &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt;; &lt;http://purl.org/procurement/public-contracts#contractingAuthority&gt;/&lt;http://schema.org/address&gt;/&lt;http://schema.org/addressCountry&gt; &quot;CZ&quot;; &lt;http://purl.org/procurement/public-contracts#kind&gt; &lt;http://purl.org/procurement/public-contracts-kinds#Supplies&gt;. FILTER NOT EXISTS {[] &lt;http://purl.org/procurement/public-contracts#lot&gt; ?b.} .
+        </RestrictTo>
+      </TargetDataset>
+      <LinkageRule>
+        <Aggregate weight="1" type="min" required="false" id="unnamed_7">
+          <Compare weight="1" threshold="0.0" required="true" metric="equality" id="unnamed_5">
+            <TransformInput function="stripUriPrefix" id="unnamed_30">
+              <Input path="?b/pc:mainObject" id="unnamed_4"></Input>
+            </TransformInput>
+            <TransformInput function="stripUriPrefix" id="unnamed_29">
+              <Input path="?a/pc:mainObject" id="unnamed_3"></Input>
+            </TransformInput>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="true" metric="levenshteinDistance" id="unnamed_6">
+            <TransformInput function="lowerCase" id="unnamed_31">
+              <Input path="?a/pc:contractingAuthority/adms:identifier/skos:notation" id="unnamed_1"></Input>
+            </TransformInput>
+            <TransformInput function="lowerCase" id="unnamed_32">
+              <Input path="?b/pc:contractingAuthority/adms:identifier/skos:notation" id="unnamed_2"></Input>
+            </TransformInput>
+            <Param name="minChar" value="0"></Param>
+            <Param name="maxChar" value="z"></Param>
+          </Compare>
+          <Compare weight="1" threshold="0.2" required="false" metric="jaroWinkler" id="unnamed_11">
+            <TransformInput function="lowerCase" id="unnamed_33">
+              <TransformInput function="removeSpecialChars" id="unnamed_35">
+                <Input path="?a/pc:location/schema:description" id="unnamed_8"></Input>
+              </TransformInput>
+            </TransformInput>
+            <TransformInput function="lowerCase" id="unnamed_34">
+              <TransformInput function="removeSpecialChars" id="unnamed_36">
+                <Input path="?b/pc:location/schema:description" id="unnamed_9"></Input>
+              </TransformInput>
+            </TransformInput>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="equality" id="unnamed_16">
+            <TransformInput function="stripUriPrefix" id="unnamed_40">
+              <Input path="?b/pc:procedureType" id="unnamed_12"></Input>
+            </TransformInput>
+            <TransformInput function="stripUriPrefix" id="unnamed_39">
+              <Input path="?a/pc:procedureType" id="unnamed_10"></Input>
+            </TransformInput>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="equality" id="unnamed_15">
+            <Input path="?a/pc:numberOfTenders" id="unnamed_13"></Input>
+            <Input path="?b/pc:numberOfTenders" id="unnamed_14"></Input>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="equality" id="unnamed_19">
+            <Input path="?a/pc:tenderDeadline" id="unnamed_17"></Input>
+            <Input path="?b/pc:tenderDeadline" id="unnamed_18"></Input>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="levenshteinDistance" id="unnamed_22">
+            <TransformInput function="lowerCase" id="unnamed_42">
+              <Input path="?a/pc:awardedTender/pc:supplier/adms:identifier/skos:notation" id="unnamed_20"></Input>
+            </TransformInput>
+            <TransformInput function="lowerCase" id="unnamed_41">
+              <Input path="?b/pc:awardedTender/pc:supplier/adms:identifier/skos:notation" id="unnamed_21"></Input>
+            </TransformInput>
+            <Param name="minChar" value="0"></Param>
+            <Param name="maxChar" value="z"></Param>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="levenshteinDistance" id="unnamed_25">
+            <TransformInput function="lowerCase" id="unnamed_43">
+              <Input path="?b/adms:identifier/skos:notation" id="unnamed_24"></Input>
+            </TransformInput>
+            <TransformInput function="lowerCase" id="unnamed_44">
+              <Input path="?a/adms:identifier/skos:notation" id="unnamed_23"></Input>
+            </TransformInput>
+            <Param name="minChar" value="0"></Param>
+            <Param name="maxChar" value="z"></Param>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="true" metric="inequality" id="unnamed_28">
+            <TransformInput function="stripUriPrefix" id="unnamed_38">
+              <Input path="?b" id="unnamed_27"></Input>
+            </TransformInput>
+            <TransformInput function="stripUriPrefix" id="unnamed_37">
+              <Input path="?a" id="unnamed_26"></Input>
+            </TransformInput>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="equality">
+            <Input path="?a/pc:agreedPrice/schema:price"></Input>
+            <Input path="?b/pc:agreedPrice/schema:price"></Input>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="equality">
+            <Input path="?a/pc:awardDate"></Input>
+            <Input path="?b/pc:awardDate"></Input>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="equality">
+            <Input path="?a/pc:estimatedPrice/schema:price"></Input>
+            <Input path="?b/pc:estimatedPrice/schema:price"></Input>
+          </Compare>
+          <Compare weight="1" threshold="0.1" required="false" metric="jaroWinkler">
+            <TransformInput function="lowerCase">
+              <TransformInput function="removeSpecialChars">
+                <Input path="?a/dcterm:title"></Input>
+              </TransformInput>
+            </TransformInput>
+            <TransformInput function="lowerCase">
+              <TransformInput function="removeSpecialChars">
+                <Input path="?b/dcterm:title"></Input>
+              </TransformInput>
+            </TransformInput>
+          </Compare>
+          <Compare weight="1" threshold="0.1" required="false" metric="jaroWinkler">
+            <TransformInput function="lowerCase">
+              <TransformInput function="removeSpecialChars">
+                <Input path="?a/dcterm:description"></Input>
+              </TransformInput>
+            </TransformInput>
+            <TransformInput function="lowerCase">
+              <TransformInput function="removeSpecialChars">
+                <Input path="?b/dcterm:description"></Input>
+              </TransformInput>
+            </TransformInput>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="false" metric="equality">
+            <Input path="?a/pc:documentationRequestDeadline"></Input>
+            <Input path="?b/pc:documentationRequestDeadline"></Input>
+          </Compare>
+        </Aggregate>
+      </LinkageRule>
+      <Filter></Filter>
+      <Outputs>
+	      <Output type="file" minConfidence="0.0">
+          <Param name="file" value="TED_Contracts.nt"/>
+          <Param name="format" value="ntriples"/>
+        </Output> 
+      </Outputs>
+    </Interlink>
+  </Interlinks>
+</Silk>
