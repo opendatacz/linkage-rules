@@ -14,6 +14,8 @@ Splits Silk linkage rule into multiple rules based on SPARQL 1.1 property paths 
 bundle install
 # Get instructions how to run the splitter
 ruby ./linkage_rule_splitter.rb help split
+# Get instructions how to execute the generate linkage rules
+ruby ./linkage_rule_splitter.rb help link
 ```
 
 ## Known caveats
