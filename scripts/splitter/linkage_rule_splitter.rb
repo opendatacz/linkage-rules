@@ -246,6 +246,33 @@ class LinkageRuleSplitter < Thor
     end
   end
 
+  desc "link RULES_DIR SILK_PATH",
+       "Execute linkage rules from RULES_DIR using Silk on SILK_PATH"
+  option :log, :type => :boolean, :default => false,
+         :desc => "Boolean flag for logging queries"
+  option :threads, :type => :numeric, :default => 4,
+         :desc => "Number of threads to use"
+  def link(rules_dir, silk_path)
+    raise "Directory #{rules_dir} doesn't exist." unless File.exists? rules_dir
+    raise "Silk cannot be found at #{silk_path}." unless File.exists? silk_path
+
+    linkage_rules = Dir["#{rules_dir.sub(/\/$/, "")}/*.xml"]
+    linkage_rules.each do |linkage_rule|
+      command = "java #{ENV["JAVA_OPTS"]} "\
+                "-DconfigFile=#{linkage_rule} "\
+                "-Dthreads=#{options[:threads]} "\
+                "-DlogQueries=#{options[:log]} "\
+                "-jar #{silk_path}"
+      start_time = Time.now
+      system command
+      end_time = Time.now
+      difference = (end_time - start_time) / 60
+      puts "Finished executing linkage rule #{linkage_rule} in #{difference} minutes."
+    end
+  end
+
+  desc "split RULE_PATH",
+       "Splits linkage rule based on SPARQL 1.1 property path values"
   option :max_rules, :type => :numeric, :default => 500,
          :desc => "Limit to maximum number of generated rules"
   option :output, :type => :string, :required => true,
@@ -253,11 +280,13 @@ class LinkageRuleSplitter < Thor
   option :property_paths, :type => :array,
          :default => ["pc:contractingAuthority/schema:address/schema:addressCountry", "pc:kind"],
          :desc => "List of property paths to use in splitting"
-  desc "split RULE_PATH",
-       "Splits linkage rule based on SPARQL 1.1 property path values"
   def split(rule_path)
     @rule = parse_rule(rule_path)
     @config = extract_config()
+    unless File.exists? options[:output]
+      Dir.mkdir(options[:output])
+    end
+
     get_restrictions(options[:property_paths], options[:output], options[:max_rules])
     puts "Generated linkage rules were put into #{options[:output]} directory."
   end

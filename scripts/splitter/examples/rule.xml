@@ -19,7 +19,6 @@
       <Param name="graph" value="http://linked.opendata.cz/resource/dataset/ted.europa.eu"/>
     </DataSource>
   </DataSources>
-  <Blocking enabled="true" blocks="BB"/>
   <Interlinks>
     <Interlink id="business_entity">
       <LinkType>owl:sameAs</LinkType>
