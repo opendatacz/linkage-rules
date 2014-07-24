@@ -20,4 +20,6 @@ ruby ./linkage_rule_splitter.rb help link
 
 ## Known caveats
 
-Only supports a single data source at the moment.
+* Only supports a single data source at the moment.
+* Only rules for existing combinations of property paths' objects are counted. Combinations of missing objects with the available objects are not included. Possible solution: avoid `COUNT` query and count the rules using the `SELECT` query results and their additional combinations. 
+
