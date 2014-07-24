@@ -126,27 +126,6 @@ class LinkageRuleSplitter < Thor
         :source_restriction_variable => source_restriction_variable
       )
      
-      count_query = Mustache.render("
-        {{{prefixes}}}
-        
-        SELECT (COUNT(*) AS ?count) 
-        WHERE {
-          {
-            {{{graph_pattern}}}
-          }
-        }",
-        :graph_pattern => graph_pattern,
-        :prefixes => prefixes
-      )
-     
-      rules_count = sparql_endpoint.query(count_query).bindings[:count].first.to_i
-      if rules_count > max_rules
-        raise Thor::Error, "The property path #{property_path} creates more than "\
-                           "#{max_rules} maximum number of rules (#{rules_count}). "\
-                           "Either increase the --max-rules option or provide a property path "\
-                           "that yields less possible linkage rule."
-      end
-
       select_query = Mustache.render("
         {{{prefixes}}}
 
@@ -201,6 +180,13 @@ class LinkageRuleSplitter < Thor
         end
       end.flatten(1)
    
+      if combinations.count > max_rules
+        raise Thor::Error, "The property paths #{property_paths.join(", ")} create more than "\
+                           "#{max_rules} maximum number of rules (#{combinations.count}). "\
+                           "Either increase the --max-rules option or provide property paths "\
+                           "that yield less possible linkage rules."
+      end
+
       # Render template restrictions for each combination 
       restrictions = combinations.map do |combination|
         source_restriction_pattern = get_restriction_pattern(
