@@ -29,12 +29,12 @@
       <LinkType>owl:sameAs</LinkType>
       <SourceDataset dataSource="TED" var="a">
         <RestrictTo>
-	  ?a &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt;; . FILTER NOT EXISTS {[] &lt;http://purl.org/procurement/public-contracts#lot&gt; ?a.} .
+	  ?a &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt;. FILTER NOT EXISTS {[] &lt;http://purl.org/procurement/public-contracts#lot&gt; ?a.} .
 	</RestrictTo>
       </SourceDataset>
       <TargetDataset dataSource="TED" var="b">
         <RestrictTo>
-          ?b &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt;; . FILTER NOT EXISTS {[] &lt;http://purl.org/procurement/public-contracts#lot&gt; ?b.} .
+          ?b &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt;. FILTER NOT EXISTS {[] &lt;http://purl.org/procurement/public-contracts#lot&gt; ?b.} .
         </RestrictTo>
       </TargetDataset>
       <LinkageRule>
