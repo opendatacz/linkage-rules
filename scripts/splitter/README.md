@@ -20,4 +20,4 @@ ruby ./linkage_rule_splitter.rb help link
 
 ## Known caveats
 
-* Only supports a single data source at the moment.
+* Only supports a single data source (`<DataSource>` element) and a single output (`<Output>` element) at the moment.

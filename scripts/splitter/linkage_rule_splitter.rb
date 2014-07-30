@@ -41,8 +41,9 @@ class LinkageRuleSplitter < Thor
           ).first
         }
       end.first # FIXME: Works for a single data source ATM.
-    
-      output_path = @rule.xpath("/Silk/Outputs/Output/Param[@name='file']/@value").first
+   
+      # Output may be placed either in Interlink or Silk elements
+      output_path = @rule.xpath("//Outputs/Output/Param[@name='file']/@value").first
 
       {
         :data_sources => data_sources,
@@ -230,6 +231,16 @@ class LinkageRuleSplitter < Thor
       raise "#{rule_path} doesn't exist." unless File.exists? rule_path
       Nokogiri::XML(File.open(rule_path))
     end
+
+    # Validates XML Silk linkage `rule` against XML Schema
+    #
+    # @param rule [Nokogiri::XML::Document]       Silk linkage rule
+    # @return [Array<Nokogiri::XML::SyntaxError>] Array of validation errors
+    #
+    def validate_rule(rule)
+      xsd = Nokogiri::XML::Schema(File.read(File.join("resources", "LinkSpecificationLanguage.xsd")))
+      xsd.validate(rule)
+    end
   end
 
   desc "link RULES_DIR SILK_PATH",
@@ -268,6 +279,13 @@ class LinkageRuleSplitter < Thor
          :desc => "List of property paths to use in splitting"
   def split(rule_path)
     @rule = parse_rule(rule_path)
+    errors = validate_rule(@rule)
+    unless errors.empty?
+      puts "Linkage rule #{rule_path} isn't valid Silk linkage rule. Errors:\n\n"
+      errors.each { |error| puts error.message }
+      exit
+    end
+
     @config = extract_config()
     unless File.exists? options[:output]
       Dir.mkdir(options[:output])
