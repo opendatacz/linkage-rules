@@ -66,11 +66,11 @@ class LinkageRuleSplitter < Thor
         {{{restriction_text}}}
         {{#restriction_pattern}}
           {{#value}}
-            ?{{restriction_variable}} {{property_path}} {{{value}}} .
+            ?{{restriction_variable}} {{{property_path}}} {{{value}}} .
           {{/value}}
           {{^value}}
             FILTER NOT EXISTS {
-              ?{{restriction_variable}} {{property_path}} [] .
+              ?{{restriction_variable}} {{{property_path}}} [] .
             }
           {{/value}}
         {{/restriction_pattern}}",
@@ -97,7 +97,7 @@ class LinkageRuleSplitter < Thor
         {:object_variable => "o#{i + 1}",
          :property_path => property_path}
       end
-
+      
       sparql_endpoint = @config[:data_sources][:sparql_endpoint]
       named_graph = @config[:data_sources][:named_graph]
       prefixes = @config[:prefixes]
@@ -116,7 +116,7 @@ class LinkageRuleSplitter < Thor
             {{{source_restriction}}}
             {{#property_paths}}
             OPTIONAL {
-              ?{{source_restriction_variable}} {{property_path}} ?{{object_variable}} .
+              ?{{source_restriction_variable}} {{{property_path}}} ?{{object_variable}} .
             }
             {{/property_paths}}
           }
@@ -274,8 +274,7 @@ class LinkageRuleSplitter < Thor
          :desc => "Limit to maximum number of generated rules"
   option :output, :type => :string, :required => true,
          :desc => "Path to output directory"
-  option :property_paths, :type => :array,
-         :default => ["pc:contractingAuthority/schema:address/schema:addressCountry", "pc:kind"],
+  option :property_paths, :type => :array, :required => true,
          :desc => "List of property paths to use in splitting"
   def split(rule_path)
     @rule = parse_rule(rule_path)
