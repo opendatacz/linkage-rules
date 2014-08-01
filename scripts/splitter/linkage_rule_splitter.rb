@@ -245,6 +245,15 @@ class LinkageRuleSplitter < Thor
 
   desc "link RULES_DIR SILK_PATH",
        "Execute linkage rules from RULES_DIR using Silk on SILK_PATH"
+  long_desc <<-LONGDESC
+    `link` task executes Silk linkage rules from RULES_DIR using Silk on SILK_PATH.
+    
+    Silk will be run with the Java Virtual Machine that is located on path,
+    to which JAVA_HOME environment variable is set. If the variable is not set, then the "java"
+    executable on the path will be used by default.
+    JVM options may be provided using the `JAVA_OPTS` environment variable.
+    For example, to set the JVM heap size to 2 GB, use: `export JAVA_OPTS="$JAVA_OPTS -Xmx2g"`
+  LONGDESC
   option :log, :type => :boolean, :default => false,
          :desc => "Boolean flag for logging queries"
   option :threads, :type => :numeric, :default => 4,
@@ -253,9 +262,15 @@ class LinkageRuleSplitter < Thor
     raise "Directory #{rules_dir} doesn't exist." unless File.exists? rules_dir
     raise "Silk cannot be found at #{silk_path}." unless File.exists? silk_path
 
+    java_path = if ENV.member? "JAVA_HOME"
+                  "#{ENV["JAVA_HOME"]}/bin/java"
+                else
+                  "java"
+                end
     linkage_rules = Dir["#{rules_dir.sub(/\/$/, "")}/*.xml"]
     linkage_rules.each do |linkage_rule|
-      command = "java #{ENV["JAVA_OPTS"]} "\
+      command = "#{java_path} "\
+                "#{ENV["JAVA_OPTS"]} "\
                 "-DconfigFile=#{linkage_rule} "\
                 "-Dthreads=#{options[:threads]} "\
                 "-DlogQueries=#{options[:log]} "\
