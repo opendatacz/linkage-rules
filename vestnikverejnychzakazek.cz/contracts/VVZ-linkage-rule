@@ -18,7 +18,7 @@
       <Param name="retryCount" value="500"></Param>
       <Param name="endpointURI" value="http://lod2-dev.vse.cz:8890/sparql"></Param>
       <Param name="retryPause" value="100"></Param>
-      <Param name="graph" value="http://VVZ/test"></Param>
+      <Param name="graph" value="http://linked.opendata.cz/resource/dataset/vestnikverejnychzakazek.cz/increment"></Param>
       <Param name="login" value=""></Param>
       <Param name="entityList" value=""></Param>
       <Param name="password" value=""></Param>
