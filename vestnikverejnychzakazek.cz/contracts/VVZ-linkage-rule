@@ -1,0 +1,67 @@
+<Silk>
+
+  <Prefixes>
+      <Prefix namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" id="rdf"></Prefix>
+      <Prefix namespace="http://purl.org/dc/terms/" id="dc"></Prefix>
+      <Prefix namespace="http://www.w3.org/ns/adms#" id="adms"></Prefix>
+      <Prefix namespace="http://www.w3.org/2002/07/owl#" id="owl"></Prefix>
+      <Prefix namespace="http://www.w3.org/2004/02/skos/core#" id="skos"></Prefix>
+      <Prefix namespace="http://example.com/" id="ex"></Prefix>
+      <Prefix namespace="http://www.w3.org/2000/01/rdf-schema#" id="rdfs"></Prefix>
+      <Prefix namespace="http://purl.org/procurement/public-contracts#" id="pc"></Prefix>
+  </Prefixes>
+
+  <DataSources>
+    <DataSource type="sparqlEndpoint" id="VVZ">
+      <Param name="pageSize" value="1000"></Param>
+      <Param name="pauseTime" value="0"></Param>
+      <Param name="retryCount" value="500"></Param>
+      <Param name="endpointURI" value="http://lod2-dev.vse.cz:8890/sparql"></Param>
+      <Param name="retryPause" value="100"></Param>
+      <Param name="graph" value="http://VVZ/test"></Param>
+      <Param name="login" value=""></Param>
+      <Param name="entityList" value=""></Param>
+      <Param name="password" value=""></Param>
+      <Param name="additionalParameters" value=""></Param>
+    </DataSource>
+  </DataSources>
+
+  <Interlinks>
+    <Interlink id="linking-by-contract-number">
+      <LinkType>owl:sameAs</LinkType>
+      
+      <SourceDataset dataSource="VVZ" var="a">
+        <RestrictTo>
+          ?a &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt; .
+        </RestrictTo>
+      </SourceDataset>
+      
+      <TargetDataset dataSource="VVZ" var="b">
+        <RestrictTo>
+          ?b &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://purl.org/procurement/public-contracts#Contract&gt; .
+        </RestrictTo>
+      </TargetDataset>
+      
+      <LinkageRule>
+        <Aggregate weight="1" type="min" required="true" id="unnamed_5">
+          <Compare weight="1" threshold="0.0" required="true" metric="equality" id="identifiers-match">
+            <Input path="?a/ex:officialIdentifier/skos:notation" id="unnamed_1"></Input>
+            <Input path="?b/ex:officialIdentifier/skos:notation" id="unnamed_2"></Input>
+          </Compare>
+          <Compare weight="1" threshold="0.0" required="true" metric="inequality" id="unnamed_4">
+            <Input path="?a" id="URI_A"></Input>
+            <Input path="?b" id="URI_B"></Input>
+          </Compare>
+        </Aggregate>
+      </LinkageRule>
+      
+      <Filter limit="1"></Filter>
+      
+      <Outputs>
+        
+      </Outputs>
+      
+    </Interlink>
+  </Interlinks>
+
+</Silk>
